@@ -15,6 +15,16 @@ START_TEST(test_check_word_normal)
 }
 END_TEST
 
+
+START_TEST(test_check_word_apostrophe)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    const char* correct_word = "Billy's";
+    ck_assert(check_word(correct_word, hashtable));
+}
+END_TEST
+
 START_TEST(test_check_word_buffer_overflow)
 {
     hashmap_t hashtable[HASH_SIZE];
@@ -27,6 +37,30 @@ START_TEST(test_check_word_buffer_overflow)
 }
 END_TEST
 
+START_TEST(test_check_word_punctuation)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    const char* leading_punctuation = "(leading";
+    const char* trailing_punctuation = "trailing!";
+    const char* splitting_punctuation = "split/ting!";
+    ck_assert(check_word(leading_punctuation, hashtable));
+    ck_assert(check_word(trailing_punctuation, hashtable));
+    ck_assert(!check_word(splitting_punctuation, hashtable));
+}
+END_TEST
+
+START_TEST(test_check_word_capitalization)
+{
+    hashmap_t hashtable[HASH_SIZE];
+    load_dictionary(DICTIONARY, hashtable);
+    const char* correct_word = "Freight";
+    ck_assert(check_word(correct_word, hashtable));
+    correct_word = "FREIGHT";
+    ck_assert(check_word(correct_word, hashtable));
+}
+END_TEST
+
 Suite *
 check_word_suite(void)
 {
@@ -36,6 +70,8 @@ check_word_suite(void)
     check_word_case = tcase_create("Core");
     tcase_add_test(check_word_case, test_check_word_normal);
     tcase_add_test(check_word_case, test_check_word_buffer_overflow);
+    tcase_add_test(check_word_case, test_check_word_punctuation);
+    tcase_add_test(check_word_case, test_check_word_apostrophe);
     suite_add_tcase(suite, check_word_case);
 
     return suite;
