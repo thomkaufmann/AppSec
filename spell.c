@@ -122,10 +122,21 @@ bool check_word(const char * word, hashmap_t hashtable[])
     if(word != NULL && hashtable != NULL) 
     {
         strncpy(word1,(char *)word, len);
+        //remove punctuation from beginning and end of word
+        for (i = 0; i < len; i++) {
+            //if NOT punctuation on first or last character
+            if (! ((i==0 || i==(len-1)) && ispunct(word1[i])))
+            {
+                word1[j] = word[i];
+                j++;
+            }
+        }   
+        len = j;
         word1[len] = '\0'; 
 
         if(len <= maxlen) 
         {
+
             //i=0 is the inital test and i=1 is the test after making the word lower case
             for(i = 0; i <= 1; i++) 
             {
