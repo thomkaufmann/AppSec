@@ -10,7 +10,7 @@
  */
 int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
 {
-    size_t maxlen = (120 * sizeof(char)); //amount allocated by getline()
+    size_t maxlen = ((LENGTH+1) * sizeof(char));
     int i = 0;
     int p = 0;
     int num_misspelled = 0;
@@ -54,7 +54,6 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
                 len = strlen(word);
                 if(len > 0)
                 {
-                    // printf("word:%s:%ld\n",word,len);
                     //remove punctuation from beginning and end of word
                     for (i = 0,p = 0; i < len; i++) {
                         if ((i==0 || i==(len-1)) && ispunct(word[i]))
@@ -67,18 +66,16 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
                     }   
                     word[len++] = '\0';      
                     
-                    if(num_misspelled < MAX_MISSPELLED && !check_word(word, hashtable))
+                    if(maxlen >= len && num_misspelled < MAX_MISSPELLED && !check_word(word, hashtable))
                     {    
-                        // printf("miss:%s:%ld\n",word,len);
                         //alloc memory in array for misspelled word
-                        misspelled[num_misspelled] = (char *)malloc(maxlen);
+                        misspelled[num_misspelled] = (char *)malloc(len);
 
                         //copy word into array
                         if (snprintf(misspelled[num_misspelled], len, "%s", word) > len)
                         {
                             return -1;    
                         }                        
-                        // strncpy(misspelled[num_misspelled] ,word, len);
 
                         num_misspelled++;
                     }
@@ -125,21 +122,10 @@ bool check_word(const char * word, hashmap_t hashtable[])
     if(word != NULL && hashtable != NULL) 
     {
         strncpy(word1,(char *)word, len);
-        //remove punctuation from beginning and end of word
-        for (i = 0; i < len; i++) {
-            //if NOT punctuation on first or last character
-            if (! ((i==0 || i==(len-1)) && ispunct(word1[i])))
-            {
-                word1[j] = word[i];
-                j++;
-            }
-        }   
-        len = j;
         word1[len] = '\0'; 
 
         if(len <= maxlen) 
         {
-
             //i=0 is the inital test and i=1 is the test after making the word lower case
             for(i = 0; i <= 1; i++) 
             {
@@ -162,7 +148,6 @@ bool check_word(const char * word, hashmap_t hashtable[])
 
                     do 
                     {
-                        // printf("len:%d:%s:%ld:%s\n",len,word1,strlen(cursor->word),cursor->word);
                         if(strncmp(cursor->word,word1,len)==0) 
                         {
                             isword = true;
