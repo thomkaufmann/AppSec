@@ -10,7 +10,7 @@
  */
 int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
 {
-    size_t maxlen = (120 * sizeof(char));
+    size_t maxlen = (120 * sizeof(char)); //amount allocated by getline()
     int i = 0;
     int p = 0;
     int num_misspelled = 0;
@@ -40,7 +40,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
     } 
     else 
     {
-        while ((read = getline(&line, &len_line, fp)) != -1 && read <= maxlen) 
+        while ((read = getline(&line, &len_line, fp)) != -1) 
         {
             //copy to line2 to avoid altering line which would prevent releasing the line malloc
             line2 = line;
@@ -112,6 +112,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
  */
 bool check_word(const char * word, hashmap_t hashtable[]) 
 {
+    size_t maxlen = ((LENGTH+1) * sizeof(char));
     int len = strlen(word);
     char word1[len];
     int bucket = 0;
@@ -121,7 +122,7 @@ bool check_word(const char * word, hashmap_t hashtable[])
     bool islinked = false;
     node* cursor = NULL;
 
-    if(word != NULL && hashtable != NULL && len <= LENGTH) 
+    if(word != NULL && hashtable != NULL) 
     {
         strncpy(word1,(char *)word, len);
         //remove punctuation from beginning and end of word
@@ -136,48 +137,51 @@ bool check_word(const char * word, hashmap_t hashtable[])
         len = j;
         word1[len] = '\0'; 
 
-        //i=0 is the inital test and i=1 is the test after making the word lower case
-        for(i = 0; i <= 1; i++) 
+        if(len <= maxlen) 
         {
-            if(i == 1) 
+
+            //i=0 is the inital test and i=1 is the test after making the word lower case
+            for(i = 0; i <= 1; i++) 
             {
-                //change to lower case
-                for (j = 0; j < len; j++) {
-                    word1[j] = tolower(word1[j]);
-                }              
-            }
-
-            bucket = hash_function(word1);
-
-            //isword may have been changed to true and there is no need to test again with lower case version
-            if(hashtable[bucket] != NULL && !isword) 
-            {
-                //a word exists at this point in the hashtable, so compare and check for linked list
-                islinked = false;
-                cursor = hashtable[bucket];
-
-                do 
+                if(i == 1) 
                 {
-                    // printf("len:%d:%s:%ld:%s\n",len,word1,strlen(cursor->word),cursor->word);
-                    if(strncmp(cursor->word,word1,len)==0) 
-                    {
-                        isword = true;
-                    }
-                    
-                    if(cursor->next != NULL) 
-                    {
-                        islinked = true;
-                        cursor = cursor->next;
-                    } 
-                    else 
-                    {
-                        islinked = false;
-                    }
-                    
-                } while(islinked);
-            }            
-        }
+                    //change to lower case
+                    for (j = 0; j < len; j++) {
+                        word1[j] = tolower(word1[j]);
+                    }              
+                }
 
+                bucket = hash_function(word1);
+
+                //isword may have been changed to true and there is no need to test again with lower case version
+                if(hashtable[bucket] != NULL && !isword) 
+                {
+                    //a word exists at this point in the hashtable, so compare and check for linked list
+                    islinked = false;
+                    cursor = hashtable[bucket];
+
+                    do 
+                    {
+                        // printf("len:%d:%s:%ld:%s\n",len,word1,strlen(cursor->word),cursor->word);
+                        if(strncmp(cursor->word,word1,len)==0) 
+                        {
+                            isword = true;
+                        }
+                        
+                        if(cursor->next != NULL) 
+                        {
+                            islinked = true;
+                            cursor = cursor->next;
+                        } 
+                        else 
+                        {
+                            islinked = false;
+                        }
+                        
+                    } while(islinked);
+                }            
+            }
+        }
     }
 
     return isword;
