@@ -14,7 +14,7 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
     int i = 0;
     int p = 0;
     int num_misspelled = 0;
-    char * line;
+    char * line = NULL;
     char * line2;
     char * word;
     size_t len = 0;
@@ -28,10 +28,10 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
         //free hashtable and return true
         for (i = 0; i < HASH_SIZE; i++)
         {
-            node* cursor = hashtable[i];
+            node * cursor = hashtable[i];
             while (cursor != NULL)
             {
-                node* temp = cursor;
+                node * temp = cursor;
                 cursor = cursor->next;
                 free(temp);
             }
@@ -95,10 +95,10 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
     //free hashtable
     for (i = 0; i < HASH_SIZE; i++)
     {
-        node* cursor = hashtable[i];
+        node * cursor = hashtable[i];
         while (cursor != NULL)
         {
-            node* temp = cursor;
+            node * temp = cursor;
             cursor = cursor->next;
             free(temp);
         }
@@ -110,22 +110,21 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
 /**
  * Returns true if word is in dictionary else false.
  */
-bool check_word(const char* word, hashmap_t hashtable[]) 
+bool check_word(const char * word, hashmap_t hashtable[]) 
 {
     int len = strlen(word);
     char word1[len];
-    int bucket;
-    int i;
-    int j;
+    int bucket = 0;
+    int i = 0;
+    int j = 0;
     bool isword = false;
     bool islinked = false;
     node* cursor = NULL;
 
-    if(word != NULL && hashtable != NULL) 
+    if(word != NULL && hashtable != NULL && len <= LENGTH) 
     {
         strncpy(word1,(char *)word, len);
         //remove punctuation from beginning and end of word
-        j = 0;
         for (i = 0; i < len; i++) {
             //if NOT punctuation on first or last character
             if (! ((i==0 || i==(len-1)) && ispunct(word1[i])))
@@ -187,13 +186,13 @@ bool check_word(const char* word, hashmap_t hashtable[])
 /**
  * Loads dictionary into memory.  Returns true if successful else false.
  */
-bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[]) 
+bool load_dictionary(const char * dictionary_file, hashmap_t hashtable[]) 
 {
     FILE * fp;
     size_t maxlen = ((LENGTH+1) * sizeof(char));
     size_t len = 0;
     __ssize_t read = 0; 
-    char * line;
+    char * line = NULL;
     int bucket = 0;
 
     for(int i = 0; i < HASH_SIZE; i++)
@@ -208,7 +207,7 @@ bool load_dictionary(const char* dictionary_file, hashmap_t hashtable[])
 
     while ((read = getline(&line, &len, fp)) != -1 && read <= maxlen) 
     {
-        node* new_node = (struct node*)malloc(sizeof(struct node));
+        node * new_node = (struct node*)malloc(sizeof(struct node));
         if(new_node == NULL) 
         {
             printf("node ptr not null.");

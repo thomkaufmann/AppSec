@@ -3,16 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *misspelled[MAX_MISSPELLED];
-node* hashtable[HASH_SIZE];
+char * misspelled[MAX_MISSPELLED];
+node * hashtable[HASH_SIZE];
 
 int main( int argc, char *argv[] ) 
 {
 
     int count_misspelled = 0;
     FILE * fp;
-    const char* testfile;
-    const char* wordlist;
+    const char * testfile = NULL;
+    const char * wordlist = NULL;
     if(argc < 3) 
     {
         printf("Not enough arguments supplied");
@@ -37,9 +37,8 @@ int main( int argc, char *argv[] )
             free(misspelled[i]);
             misspelled[i] = NULL;
         }    
-        // free(misspelled[MAX_MISSPELLED]);    
     }
 
-        return 0;
+    return 0;
 
 }
