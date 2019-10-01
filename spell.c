@@ -56,23 +56,22 @@ int check_words(FILE* fp, hashmap_t hashtable[], char * misspelled[])
                 {
                     //remove punctuation from beginning and end of word
                     for (i = 0,p = 0; i < len; i++) {
-                        if ((i==0 || i==(len-1)) && ispunct(word[i]))
+                        if (! ((i==0 || i==(len-1)) && ispunct(word[i])))
                         {
-                            len--;
-                        } else {
                             word[p] = word[i];
                             p++;
                         }
                     }   
-                    word[len++] = '\0';      
+                    len = p;
+                    word[len] = '\0';
                     
                     if(maxlen >= len && num_misspelled < MAX_MISSPELLED && !check_word(word, hashtable))
                     {    
                         //alloc memory in array for misspelled word
-                        misspelled[num_misspelled] = (char *)malloc(len);
+                        misspelled[num_misspelled] = (char *)malloc(len+1);
 
                         //copy word into array
-                        if (snprintf(misspelled[num_misspelled], len, "%s", word) > len)
+                        if (snprintf(misspelled[num_misspelled], len+1, "%s", word) > len+1)
                         {
                             return -1;    
                         }                        

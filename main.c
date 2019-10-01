@@ -30,10 +30,14 @@ int main( int argc, char *argv[] )
             
         count_misspelled = check_words(fp, hashtable, misspelled);
         fclose(fp);
-        printf("Misspelled count:%d\n\n", count_misspelled);
+        // printf("Misspelled count:%d\n\n", count_misspelled);
         for(int i = 0; i < count_misspelled; i++)
         {
-            printf("Misspelled:%s\n",misspelled[i]);
+            printf("%s",misspelled[i]);
+            if(i != count_misspelled - 1)
+            {
+                printf(",");
+            }
             free(misspelled[i]);
             misspelled[i] = NULL;
         }    
